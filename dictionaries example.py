@@ -18,18 +18,7 @@ def setup():
     voter3 = {"A":1, "B": 2, "C": 3}
     voting_array = [voter1,voter2,voter3]
 
-    #the candidates and the number of 1st choice votes they have
-    candidates_and_votes = {}
-
-    for i in range(65,65+no_of_cand):
-        candidates_and_votes[str(chr(i))]=0
-    
-    #add each voter's current 1st choice to the voting_array
-    for voter in voting_array:
-        for key in voter:
-            if voter[key]==1:
-                candidates_and_votes[key]+=1
-    print(candidates_and_votes)
+    candidates_and_votes = tally_votes(voting_array, no_of_cand)
 
     #potential orders of elimination of candidates
     elimination_orders= []
@@ -43,29 +32,50 @@ def setup():
 
     #how many voters we have to play with
     coalition_size = 3
+    return candidates_and_votes, elimination_orders, voting_array
 
-setup()
 
+def tally_votes(voting_array, no_of_cand):
+    #the candidates and the number of 1st choice votes they have
+    candidates_and_votes = {}
 
-def check_order(candidates_and_votes ,ord, coalition_size, c_and_v, votes):
+    for i in range(65,65+no_of_cand):
+        candidates_and_votes[str(chr(i))]=0
+    
+    #add each voter's current 1st choice to the voting_array
+    for voter in voting_array:
+        for key in voter:
+            if voter[key]==1:
+                candidates_and_votes[key]+=1
+    return(candidates_and_votes)
+
+def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
     cohort_size = 0
     variable_votes = dict(candidates_and_votes)
-    for j in len(ord):
-        for k in ord[j[0]:]:
-            while int(k[1]) <= int(j[1]): #while votes for candidate k is leq votes for candidate j
+    for i in ord:
+        for j in ord[ord.index(i):]:
+            votes_req = int(variable_votes[i]) - int(variable_votes[j]) + 1 #while votes for candidate k is leq votes for candidate j
                 #votes_required = int(k[1])-int(j[1])+1
-                if coalition_size > 0:#coalition_size>=votes_required
-                    #k[1]+=votes_required
-                    variable_votes[k] +=1
-                    coalition_size -= 1
-                    #coalition_size-=votes_required
-                    cohort_size += 1
-                    #cohort_size
-                else:
-                    print("Elimination order is impossible", elimination_orders)
-                    return
+            if coalition_size > votes_req :#coalition_size>=votes_required
+                #k[1]+=votes_required
+                variable_votes[j] += votes_req
+                coalition_size -= votes_req
+                #coalition_size-=votes_required
+                cohort_size += votes_req
+                #cohort_size
+            else:
+                print("Elimination order is impossible", ord)
+                return
+        for voter in voting_array:
+            if voter[i] == 1:
+                voter = {key: voter[key]-1 for key in voter}
+        print(voting_array)
+        #c_and_v = redistribute(j, c_and_v, votes)
+        #coalition_size += cohort_size
 
-        if j[0] < no_of_cand:
-            c_and_v = redistribute(j, c_and_v, votes)
-            coalition_size += cohort_size
     print("Successful Manipulation: ",ord)
+
+candidates_and_votes, elimination_orders, voting_array = setup()
+coalition_size = 50
+for order in elimination_orders:
+    check_order(candidates_and_votes, order, coalition_size, voting_array)
