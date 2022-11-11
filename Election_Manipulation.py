@@ -37,20 +37,21 @@ def check_order(ord, coalition_size, c_and_v, votes):
     print(ord)
     tallied_c_and_v = TallyVotes(c_and_v, votes)
     cohort_size = 0
-    for j in len(ord):
-        for k in ord[j[0]:]:
-            while int(k[1]) <= int(j[1]):#while votes for candidate k is leq votes for candidate j
+    for j in range(0,len(ord)):#for all c_i
+        for k in range(j,len(ord)):#for all c_j after c_i
+            while c_and_v[k] <= c_and_v[j]:#while votes for candidate k is leq votes for candidate j
+                print(c_and_v)
                 #votes_required = int(k[1])-int(j[1])+1
                 if coalition_size > 0:#coalition_size>=votes_required
                     #k[1]+=votes_required
-                    k[1] +=1
+                    c_and_v[k][1] +=1
                     coalition_size -= 1
                     #coalition_size-=votes_required
                     cohort_size += 1
                     #cohort_size
                 else:
                     print("Elimination order is impossible",elimination_orders)
-                    return "FUCK"
+                    return "impossible"
 
         if j[0] < no_of_cand:
             c_and_v = redistribute(j, c_and_v, votes)
@@ -59,5 +60,4 @@ def check_order(ord, coalition_size, c_and_v, votes):
     
 
 for x in elimination_orders:
-    print("swe",elimination_orders)
     check_order(x, coalition_size, candidates_and_votes, voting_array)
