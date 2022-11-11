@@ -50,7 +50,7 @@ def check_order(ord, coalition_size, c_and_v, votes):
                     #cohort_size
                 else:
                     print("Elimination order is impossible",elimination_orders)
-                    return "FUCK"
+                    return
 
         if j[0] < no_of_cand:
             c_and_v = redistribute(j, c_and_v, votes)

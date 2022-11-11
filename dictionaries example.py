@@ -1,5 +1,6 @@
 #from base64 import encode
 from itertools import permutations
+import itertools
 
 def setup():
     """setup()
@@ -30,13 +31,42 @@ def setup():
                 candidates_and_votes[key]+=1
     print(candidates_and_votes)
 
-
-    print(candidates_and_votes)
-
     #potential orders of elimination of candidates
     elimination_orders= []
+    # Get permutations of n-1 candidates
+    cand = list(candidates_and_votes.keys())
+    perms_of_candidates = permutations(cand[0:no_of_cand-1])
+    for i in perms_of_candidates:
+        x = list(i)+[cand[-1]]
+        elimination_orders.append(x)
+    print(elimination_orders)
 
     #how many voters we have to play with
-    coalition_size = 4
+    coalition_size = 3
 
 setup()
+
+
+def check_order(ord, coalition_size, c_and_v, votes):
+    print(ord)
+    tallied_c_and_v = TallyVotes(c_and_v, votes)
+    cohort_size = 0
+    for j in len(ord):
+        for k in ord[j[0]:]:
+            while int(k[1]) <= int(j[1]):#while votes for candidate k is leq votes for candidate j
+                #votes_required = int(k[1])-int(j[1])+1
+                if coalition_size > 0:#coalition_size>=votes_required
+                    #k[1]+=votes_required
+                    k[1] +=1
+                    coalition_size -= 1
+                    #coalition_size-=votes_required
+                    cohort_size += 1
+                    #cohort_size
+                else:
+                    print("Elimination order is impossible",elimination_orders)
+                    return
+
+        if j[0] < no_of_cand:
+            c_and_v = redistribute(j, c_and_v, votes)
+            coalition_size += cohort_size
+    print("Successful Manipulation: ",ord)
