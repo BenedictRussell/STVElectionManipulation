@@ -49,13 +49,14 @@ setup()
 
 def check_order(candidates_and_votes ,ord, coalition_size, c_and_v, votes):
     cohort_size = 0
+    variable_votes = dict(candidates_and_votes)
     for j in len(ord):
         for k in ord[j[0]:]:
             while int(k[1]) <= int(j[1]): #while votes for candidate k is leq votes for candidate j
                 #votes_required = int(k[1])-int(j[1])+1
                 if coalition_size > 0:#coalition_size>=votes_required
                     #k[1]+=votes_required
-                    k[1] +=1
+                    variable_votes[k] +=1
                     coalition_size -= 1
                     #coalition_size-=votes_required
                     cohort_size += 1
