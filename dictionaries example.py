@@ -1,6 +1,5 @@
 #from base64 import encode
 from itertools import permutations
-import itertools
 
 def setup():
     """setup()
@@ -28,7 +27,6 @@ def setup():
     for i in perms_of_candidates:
         x = list(i)+[cand[-1]]
         elimination_orders.append(x)
-    print(elimination_orders)
 
     #how many voters we have to play with
     coalition_size = 3
@@ -40,7 +38,7 @@ def tally_votes(voting_array, no_of_cand):
     candidates_and_votes = {}
 
     for i in range(65,65+no_of_cand):
-        candidates_and_votes[str(chr(i))]=0
+        candidates_and_votes[str(chr(i))] = 0
     
     #add each voter's current 1st choice to the voting_array
     for voter in voting_array:
@@ -51,12 +49,13 @@ def tally_votes(voting_array, no_of_cand):
 
 def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
     cohort_size = 0
+    count = 1
     variable_votes = dict(candidates_and_votes)
     for i in ord:
-        for j in ord[ord.index(i):]:
+        for j in ord[ord.index(i)+1:]:
             votes_req = int(variable_votes[i]) - int(variable_votes[j]) + 1 #while votes for candidate k is leq votes for candidate j
                 #votes_required = int(k[1])-int(j[1])+1
-            if coalition_size > votes_req :#coalition_size>=votes_required
+            if coalition_size >= votes_req: #coalition_size>=votes_required
                 #k[1]+=votes_required
                 variable_votes[j] += votes_req
                 coalition_size -= votes_req
@@ -66,16 +65,18 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
             else:
                 print("Elimination order is impossible", ord)
                 return
-        for voter in voting_array:
-            if voter[i] == 1:
-                voter = {key: voter[key]-1 for key in voter}
-        print(voting_array)
-        #c_and_v = redistribute(j, c_and_v, votes)
-        #coalition_size += cohort_size
+        if count < len(ord): #no point in doing the very last step of redistrbuting
+            for en, voter in enumerate(voting_array):
+                if voter[i] == 1:
+                    voting_array[en] = {key: voter[key]-1 for key in voter}
+                else:
+                    voter[i] = 0
+            coalition_size += cohort_size
+            count +=1
 
-    print("Successful Manipulation: ",ord)
+    print("Successful Manipulation: ", ord)
 
 candidates_and_votes, elimination_orders, voting_array = setup()
-coalition_size = 50
+coalition_size = 3
 for order in elimination_orders:
     check_order(candidates_and_votes, order, coalition_size, voting_array)
