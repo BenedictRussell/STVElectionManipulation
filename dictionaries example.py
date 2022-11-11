@@ -47,13 +47,11 @@ def setup():
 setup()
 
 
-def check_order(ord, coalition_size, c_and_v, votes):
-    print(ord)
-    tallied_c_and_v = TallyVotes(c_and_v, votes)
+def check_order(candidates_and_votes ,ord, coalition_size, c_and_v, votes):
     cohort_size = 0
     for j in len(ord):
         for k in ord[j[0]:]:
-            while int(k[1]) <= int(j[1]):#while votes for candidate k is leq votes for candidate j
+            while int(k[1]) <= int(j[1]): #while votes for candidate k is leq votes for candidate j
                 #votes_required = int(k[1])-int(j[1])+1
                 if coalition_size > 0:#coalition_size>=votes_required
                     #k[1]+=votes_required
@@ -63,7 +61,7 @@ def check_order(ord, coalition_size, c_and_v, votes):
                     cohort_size += 1
                     #cohort_size
                 else:
-                    print("Elimination order is impossible",elimination_orders)
+                    print("Elimination order is impossible", elimination_orders)
                     return
 
         if j[0] < no_of_cand:
