@@ -5,9 +5,6 @@ def setup():
     Takes the number of candidates, current voter rankings and coalition size.
     Creates a dictionary with the current votes for each candidate, and a list
     of potential elimination orders."""
-
-    # no_of_cand = 4
-    # voting_array = [[1,4,2,3],[4,2,1,3],[1,4,3,2],[3,2,4,1],[2,3,4,1]]
     no_of_cand = 4
 
     # list of ordered votes that we already know about
@@ -51,6 +48,9 @@ def tally_votes(voting_array, no_of_cand):
     return(candidates_and_votes)
 
 def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
+    coalition_votes = []
+    for i in range(0,coalition_size):
+        coalition_votes.append([])
     coalition_current_votes = {"A":0, "B": 0, "C": 0, "D": 0}
     count = 1
     # copy of candidates and votes
@@ -59,12 +59,14 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
         for j in ord[ord.index(i)+1:]:
             # compute votes required for j to beat i
             votes_req = int(variable_votes[i]) - int(variable_votes[j]) + 1
-            # didnt check that difference needs to be positive
+            # check that difference is positive
             if votes_req > 0:
                 if coalition_size >= votes_req: # check if coalition size >= votes required to make j beat i
                     variable_votes[j] += votes_req
                     # decrease the amount of votes we can maniplulate this round
                     coalition_size -= votes_req
+                    for c in range(0,votes_req):
+                        coalition_votes[c]
                     # tally
                     coalition_current_votes[j] +=votes_req
 
