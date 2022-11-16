@@ -9,7 +9,7 @@ def setup():
 
     # list of ordered votes that we already know about
     voter1 = {"A":2, "B": 1, "C": 3, "D": 4}
-    voter2 = {"A":2, "B": 1, "C": 2, "D": 3}
+    voter2 = {"A":2, "B": 1, "C": 2, "D": 4}
     voter3 = {"A":1, "B": 2, "C": 3, "D": 3}
     voting_array = [voter1,voter2,voter3]
 
@@ -49,6 +49,8 @@ def tally_votes(voting_array, no_of_cand):
 
 def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
     coalition_votes = []
+    coalition_store = []
+    candidates_remaining = ["A", "B", "C", "D"]
     for i in range(0,coalition_size):
         coalition_votes.append([])
     coalition_current_votes = {"A":0, "B": 0, "C": 0, "D": 0}
@@ -61,12 +63,13 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
             votes_req = int(variable_votes[i]) - int(variable_votes[j]) + 1
             # check that difference is positive
             if votes_req > 0:
-                if coalition_size >= votes_req: # check if coalition size >= votes required to make j beat i
+                if len(coalition_votes) >= votes_req: # check if coalition size >= votes required to make j beat i
                     variable_votes[j] += votes_req
                     # decrease the amount of votes we can maniplulate this round
-                    coalition_size -= votes_req
                     for c in range(0,votes_req):
-                        coalition_votes[c]
+                        coalition_votes[0].append(j)
+                        coalition_store.append(coalition_votes[0])
+                        coalition_votes.remove(coalition_votes[0])
                     # tally
                     coalition_current_votes[j] +=votes_req
 
@@ -74,21 +77,29 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
                     # coalition was too small
                     print("Elimination order is impossible", ord)
                     return
+        candidates_remaining.remove(i)
         if count < len(ord): # no point in doing the very last step of redistrbuting
             for en, voter in enumerate(voting_array):
                 # Changes any first preference votes to the next available candidate in their preference order
                 if voter[i] == 1:
-                    voting_array[en] = {key: voter[key]-1 for key in voter}
+                    voting_array[en] = {key: voter[key]-1 for key in voter}    
+        
                 else:
                     # Eliminate candidate i from everyone elses list
                     voter[i] = 0
+        #print(coalition_store)
+        for b in coalition_store:
+            if list(set(b).intersection(set(candidates_remaining))) == []:
+                coalition_votes.insert(0,b)
+                coalition_store.remove(b)
             # voters in coalitions next spot available to be filled
-            coalition_size += coalition_current_votes[i]
+            
             count +=1
-    print(coalition_current_votes)
+    coalition_votes += coalition_store
+    print(coalition_votes)
     print("Successful Manipulation: ", ord)
 
 candidates_and_votes, elimination_orders, voting_array = setup()
-coalition_size = 4
+coalition_size = 10
 for order in elimination_orders:
     check_order(candidates_and_votes, order, coalition_size, voting_array)
