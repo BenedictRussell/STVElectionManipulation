@@ -104,11 +104,13 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
     return dic__coalition_votes, ord
 
 def check_manipulation(votes_set, no_cand):
+    print(votes_set)
     k = no_cand
     all_votes = votes_set
     # loop over number of eliminations (n-1 candidates)
     for i in range(0,no_cand-1):
         c_and_v = tally_votes(all_votes, k)
+        # needs changing to elimate all candidates with votes = 0 / minimum, and change to while loop (while not just one candidate left with none-zero votes - what if tie?)
         if i == 0:
             elim_cands = min(c_and_v, key=c_and_v.get)
         else:
@@ -127,16 +129,18 @@ def check_manipulation(votes_set, no_cand):
     return (max(c_and_v, key=c_and_v.get))
 
 
-coalition_array = []
+#coalition_array = []
 candidates_and_votes, elimination_orders, voting_array = setup()
 coalition_size = 5
 
 for order in elimination_orders:
     a,b = check_order(candidates_and_votes, order, coalition_size, voting_array)
-    coalition_array.append([a,b])
+    #coalition_array.append([a,b])
     #if b != "fail":
     y, yy, yyy = setup()
     check_votes = yyy + a
+    print(a)
+    #print(check_votes)
     winner = check_manipulation(check_votes,4)
     print(b, winner)
 
