@@ -112,7 +112,6 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
         back_ord = ord[::-1]
         dif = list(sorted(set(back_ord) - set(v), key=ord.index))
         v += dif
-        #dic__coalition_votes.append({"A":v.index("A")+1, "B": v.index("B")+1, "C": v.index("C")+1, "D": v.index("D")+1})
         dic__coalition_votes.append({key: value+1 for value, key in enumerate(v)})
     return dic__coalition_votes, ord
 
