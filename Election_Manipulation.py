@@ -77,7 +77,7 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
 
                 else:
                     # coalition was too small
-                    #remove_orders(eliminated_candidates)
+                    remove_orders(eliminated_candidates)
                     print("Elimination order is impossible", ord)
                     return "fail", "fail"
                     #return [], ord
@@ -105,14 +105,12 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
             
     coalition_votes += coalition_store
     #print("Successful Manipulation: ", ord)
-    
     for v in coalition_votes:
         back_ord = ord[::-1]
         dif = list(sorted(set(back_ord) - set(v), key=ord.index))
-        for f in dif:
-            v.append(f)
-        dic__coalition_votes.append({"A":v.index("A")+1, "B": v.index("B")+1, "C": v.index("C")+1, "D": v.index("D")+1})
-
+        v += dif
+        #dic__coalition_votes.append({"A":v.index("A")+1, "B": v.index("B")+1, "C": v.index("C")+1, "D": v.index("D")+1})
+        dic__coalition_votes.append({key: value+1 for value, key in enumerate(v)})
     return dic__coalition_votes, ord
 
 def check_manipulation(votes_set, no_cand):
@@ -133,23 +131,23 @@ def check_manipulation(votes_set, no_cand):
                 all_votes[en] = {key: vote_dict[key]-1 for key in vote_dict}
             else:
                 # Eliminate candidate i from everyone elses list
-                all_votes[en][elim_cand]=0
+                all_votes[en][elim_cand] = 0
                 for key, value in vote_dict.items():
                     if value > vote_dict[elim_cand]:
                         all_votes[en][key] += -1
                   
     c_and_v = tally_votes(all_votes, k)
-    print(c_and_v,"\n")
+    #print(c_and_v,"\n")
 
     return (max(c_and_v, key=c_and_v.get))
 
 
 #coalition_array = []
 candidates_and_votes, elimination_orders, voting_array = setup()
-coalition_size = 50
+coalition_size = 3
 
 for order in elimination_orders:
-    print(order)
+    #print(order)
     a,b = check_order(candidates_and_votes, order, coalition_size, voting_array)
     #coalition_array.append([a,b])
     if b != "fail":
