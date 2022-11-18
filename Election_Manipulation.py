@@ -44,8 +44,10 @@ def tally_votes(v_array, no_of_cand):
     return(candidates_and_votes)
 
 def remove_orders(unsuccesful_start):
+    elimination_orders_remove = []
     k = len(unsuccesful_start) 
-    for i in elimination_orders:
+    copy = elimination_orders.copy()
+    for i in copy:
         if i[0:k] == unsuccesful_start:
             elimination_orders.remove(i)
 
@@ -62,6 +64,7 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
     # copy of candidates and votes
     variable_votes = dict(candidates_and_votes)
     for i in ord:
+        eliminated_candidates.append(i)
         for j in ord[ord.index(i)+1:]:
             # compute votes required for j to beat i
             votes_req = int(variable_votes[i]) - int(variable_votes[j]) + 1
@@ -94,7 +97,7 @@ def check_order(candidates_and_votes ,ord, coalition_size, voting_array):
                     for key, value in voter.items():
                         if value > voter[i]:
                             voting_array_c[en][key] += -1
-            count +=1
+                count +=1
         #print(coalition_store)
         for b in coalition_store:
             if list(set(b).intersection(set(candidates_remaining))) == []:
@@ -144,7 +147,7 @@ def check_manipulation(votes_set, no_cand):
 
 #coalition_array = []
 candidates_and_votes, elimination_orders, voting_array = setup()
-coalition_size = 3
+coalition_size = 4
 
 for order in elimination_orders:
     #print(order)
