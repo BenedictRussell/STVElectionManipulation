@@ -1,5 +1,6 @@
 from itertools import permutations
 import itertools
+import csv
 
 def setup():
     """setup()
@@ -13,6 +14,10 @@ def setup():
     voter2 = {"A":3, "B": 1, "C": 2, "D": 4}
     voter3 = {"A":1, "B": 2, "C": 3, "D": 4}
     voting_array = [voter1,voter2,voter3]
+
+    #read csv for list of ordered votes that we already know about
+    #with
+    #do it in notebook instead, need to modularise this code
 
     candidates_and_votes = tally_votes(voting_array, no_of_cand)
 
