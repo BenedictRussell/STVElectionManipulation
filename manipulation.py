@@ -1,4 +1,6 @@
 def returnMRRate(votes,C,K):
+    import itertools
+    from itertools import permutations
     def setup(Rankings,Candidates):
         """setup()
         Takes the number of candidates, current voter rankings and coalition size.
@@ -12,15 +14,16 @@ def returnMRRate(votes,C,K):
 
         # potential orders of elimination of candidates
         elimination_orders= []
-        # Get permutations of n-1 candidates
+        # Get permutattions of n-1 candidates
         cand = list(candidates_and_votes.keys())
-        perms_of_candidates = permutations(cand[0:number_of_cands-1])
+        perms_of_candidates = permutations(cand[0:len(cand)-1])
         for i in perms_of_candidates:
             x = list(i)+[cand[-1]]
             elimination_orders.append(x)
+        no_ords = len(elimination_orders)
         #print("orders: ",elimination_orders)
         #print(candidates_and_votes,voting_array)
-        return candidates_and_votes, elimination_orders, voting_array, candidates
+        return candidates_and_votes, elimination_orders, voting_array, no_ords
     def tally_votes(v_array, candidates):
         # the candidates and the number of 1st choice votes they have
         candidates_and_votes = {candidates[i]:0 for i in range(0,len(candidates))}
@@ -37,10 +40,10 @@ def returnMRRate(votes,C,K):
     def remove_orders(unsuccesful_start):
         elimination_orders_remove = []
         k = len(unsuccesful_start) 
-        copy = elimination_orders.copy()
+        copy = yy.copy()
         for i in copy:
             if i[0:k] == unsuccesful_start:
-                elimination_orders.remove(i)
+                yy.remove(i)
     def check_order(candidates_and_votes, order, coalition_size, voting_array, candidates):
         voting_array_c = voting_array.copy()
         #print("HERE",candidates_and_votes)
@@ -71,9 +74,9 @@ def returnMRRate(votes,C,K):
 
                     else:
                         # coalition was too small
-                        remove_orders(eliminated_candidates)
+                        remove_orders(yy)
                         print("Elimination order is impossible", order)
-                        return "fail","fail"
+                        return 0,0,0
                         #return [], ord
             candidates_remaining.remove(i)
             if count <= len(order): # no point in doing the very last step of redistrbuting
@@ -114,60 +117,13 @@ def returnMRRate(votes,C,K):
             #print("V+dif:",v)
             #print("NEW DICT:",{key: value+1 for value, key in enumerate(v)})
             dic__coalition_votes.append({key: value+1 for value, key in enumerate(v)})
-        return dic__coalition_votes, order
-    def check_manipulation(votes, k, candidates):
-        all_votes = votes
-        #print("CHECK MANIPULATION OF: ")
-        # loop over number of eliminations (n-1 candidates)
-        for i in range(0,k-1):
-            #print(candidates)
-            c_and_v = tally_votes(all_votes, candidates)
-            #print("\n c_and_v: ",c_and_v)
-            # there can't be ties by construction 
-            # needs changing to elimate all candidates with votes = 0 / minimum, and change to while loop (while not just one candidate left with none-zero votes - what if tie?)
-            if i == 0:
-                elim_cand = min(c_and_v, key=c_and_v.get) #get candidate with least 1st choice votess
-            else:
-                elim_cand = min(x for x in c_and_v if  c_and_v[x] != 0)
-            for en, vote_dict in enumerate(all_votes):
-                #print("before", vote_dict)
-                #print(elim_cand)
-                # Changes any first preference votes to the next available candidate in their preference order
-                if vote_dict[elim_cand] == 1:
-                    all_votes[en] = {key: vote_dict[key]-1 for key in vote_dict}
-                    all_votes[en].pop(elim_cand)
-                else:
-                    # Eliminate candidate i from everyone elses list
-                    #all_votes[en][elim_cand] = 0
-                    for key, value in vote_dict.items():
-                        if value > vote_dict[elim_cand]:
-                            all_votes[en][key] += -1
-                    all_votes[en].pop(elim_cand)
-               # print("after", all_votes[en])
-            candidates.remove(elim_cand)
-        #print("CANDIDATES",candidates)
-        c_and_v = tally_votes(all_votes, candidates)
-        #print("\n c_and_v: ",c_and_v)  
-        #print(c_and_v,"\n")
-
-        return (max(c_and_v, key=c_and_v.get))
-
-    print(votes,C)
-    candidates_and_votes, elimination_orders, voting_array,candidates = setup(votes,C)
-    coalition_size = K
+        return dic__coalition_votes, order, 1
     
-    number_of_orders = len(elimination_orders)
     successful_manipulations = 0
+    y,yy,yyy,yyyy = setup(votes,C)
+    for i in yy:
+        a,b,c = check_order(y, i, K, yyy, C)
+        print(successful_manipulations)
+        successful_manipulations += c
     
-    for order in elimination_orders:
-        a,b = check_order(candidates_and_votes, order, coalition_size, voting_array,candidates)
-        #print("a: ",a)
-        #print("b: ",b)
-        #coalition_array.append([a,b])
-        if b != "fail":
-            y, yy, yyy,yyyy = setup()
-            check_votes = yyy + a
-            winner = check_manipulation(check_votes,len(yyyy),yyyy)
-
-    return successful_manipulations/number_of_orders    
-    
+    return successful_manipulations/yyyy
