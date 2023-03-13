@@ -1,19 +1,19 @@
 def returnMRRate(votes,C,K):
     import itertools
     from itertools import permutations
-    def setup(Rankings,Candidates):
+    def setup():
         """setup()
         Takes the number of candidates, current voter rankings and coalition size.
         Creates a dictionary with the current votes for each candidate, and a list
         of potential elimination orders."""
 
-        voting_array = Rankings
-        candidates  = Candidates
+        voting_array = votes
+        candidates  = C
 
         candidates_and_votes = tally_votes(voting_array, candidates)
 
         # potential orders of elimination of candidates
-        elimination_orders= []
+        elimination_orders = []
         # Get permutattions of n-1 candidates
         cand = list(candidates_and_votes.keys())
         perms_of_candidates = permutations(cand[0:len(cand)-1])
@@ -74,7 +74,7 @@ def returnMRRate(votes,C,K):
 
                     else:
                         # coalition was too small
-                        remove_orders(yy)
+                        remove_orders(order)
                         print("Elimination order is impossible", order)
                         return 0,0,0
                         #return [], ord
@@ -120,10 +120,10 @@ def returnMRRate(votes,C,K):
         return dic__coalition_votes, order, 1
     
     successful_manipulations = 0
-    y,yy,yyy,yyyy = setup(votes,C)
+    y, yy, yyy, yyyy = setup()
     for i in yy:
         a,b,c = check_order(y, i, K, yyy, C)
-        print(successful_manipulations)
+       # print(successful_manipulations)
         successful_manipulations += c
     
     return successful_manipulations/yyyy
